@@ -58,21 +58,28 @@ def semchoose(url):
 
 
 url="http://dspace.amritanet.edu:8080/xmlui/handle/123456789/150"
-page = requests.get(url)
-soup = BeautifulSoup(page.content,'html.parser')
+flag=1
+try:    
+    page = requests.get(url)
 
-print("Hello! This was developed by Rajkumar. Have a look at your question papers without wasting time !! ")
+except:
+    print("Oops!! You're not connected to Amrita Wi-Fi :( !! ")
+    flag=0
 
-t=PrettyTable(['Semesters'])
-div=soup.findAll('div', id="aspect_artifactbrowser_CommunityViewer_div_community-view")
-li=div[0].ul.findAll('li')
+if(flag==1):
+    soup = BeautifulSoup(page.content,'html.parser')
 
-for i in range(len(li)):
-    t.add_row([li[i].a.text.strip()])
-t.align = "l"
-print(t)
-ch=int(input("Enter your semester : "))
-url='http://dspace.amritanet.edu:8080/'
-url+=li[ch-1].a['href']
-semchoose(url)
+    print("Hello! This was developed by Rajkumar. Have a look at your question papers without wasting time !! ")
 
+    t=PrettyTable(['Semesters'])
+    div=soup.findAll('div', id="aspect_artifactbrowser_CommunityViewer_div_community-view")
+    li=div[0].ul.findAll('li')
+
+    for i in range(len(li)):
+        t.add_row([li[i].a.text.strip()])
+    t.align = "l"
+    print(t)
+    ch=int(input("Enter your semester : "))
+    url='http://dspace.amritanet.edu:8080/'
+    url+=li[ch-1].a['href']
+    semchoose(url)
