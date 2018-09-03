@@ -11,6 +11,7 @@ from time import sleep
 from sys import exit
 
 def year(url):
+    year_url=url
     try:
         page = requests.get(url)
         soup = BeautifulSoup(page.content,'html.parser')
@@ -52,7 +53,7 @@ def year(url):
     if(ch==0):
         exit()
     else:
-        start()
+        year(year_url)
 
     
 
