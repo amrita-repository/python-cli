@@ -14,8 +14,7 @@ def year(url):
     try:
         page = requests.get(url)
         soup = BeautifulSoup(page.content,'html.parser')
-
-        
+        base_url=url
         div=soup.findAll('div', xmlns="http://di.tamu.edu/DRI/1.0/")
         ul=div[0].findAll('ul')
         li=ul[0].findAll('li')
@@ -46,13 +45,15 @@ def year(url):
     except:
         print("UNEXPECTED ERROR! :(")
         exit()
-    print("Please wait till the browser opens ! ")
+    print("\nBROWSER IS OPENING! PLEASE BE PATIENT :) ")
     webbrowser.open(url, new=0, autoraise=True)
-    ch=int(input('Do you want to continue ? \nPress 1 for Yes and 0 for No : '))
+    ch=int(input('\nDo you want to continue ? \nPress 1 for Yes and 0 for No : '))
     if(ch==0):
+        print("\nThanks for using. Wish you ALL THE BEST for your exams :)")
+        sleep(3)
         exit()
     else:
-        start()
+        year(base_url)
 
     
 
