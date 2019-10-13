@@ -5,6 +5,7 @@ import itertools
 import threading
 import time
 import sys
+import datetime
 from bs4 import BeautifulSoup
 from prettytable import PrettyTable
 from time import sleep
@@ -166,7 +167,8 @@ url="http://dspace.amritanet.edu:8080"
 print("\nHELLO! Ever wanted to use Amrita Repository on PC ? \nWell, here's my Python Script that does the same job as the app. \nHave a look at your question papers without wasting time !! \n")
 print("Please ensure you're connected to Amrita Wi-Fi for a smooth experience :)\n")
 print("Report bugs to : rajkumaar2304@gmail.com")
-print("(c) 2018 Rajkumar\n")
+now = datetime.datetime.now()
+print("(c) "+str(now.year)+" Rajkumar\n")
 done=10
 for c in itertools.cycle(['|', '/', '-', '\\']):
     if not(done):
