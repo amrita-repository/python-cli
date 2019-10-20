@@ -10,14 +10,24 @@ from bs4 import BeautifulSoup
 from prettytable import PrettyTable
 from time import sleep
 from sys import exit
+from os import system, name
+
+stack_url=[]
+def clear():
+    # for windows
+    if name == 'nt':
+        _ = system('cls')
+
+        # for mac and linux(here, os.name is 'posix')
+    else:
+        _ = system('clear')
 
 def year(url):
+    clear()
     year_url=url
     try:
         page = requests.get(url)
         soup = BeautifulSoup(page.content,'html.parser')
-
-        
         div=soup.findAll('div', xmlns="http://di.tamu.edu/DRI/1.0/")
         ul=div[0].findAll('ul')
         li=ul[0].findAll('li')
@@ -33,6 +43,7 @@ def year(url):
             title=subdiv[i].findAll('div')
             span=title[1].div.findAll('span')
             t.add_row([i+1,span[1]['title']])
+        t.add_row([len(subdiv)+1,"Back"])
         t.align='l'
         print(t)
         while(True):
@@ -43,6 +54,9 @@ def year(url):
                 url='http://dspace.amritanet.edu:8080/'
                 url+=link
                 break
+            elif(ch == len(subdiv)+1):
+                semchoose(stack_url.pop())
+
             else:
                 print("Please enter a valid input!")
     except:
@@ -56,14 +70,10 @@ def year(url):
     else:
         year(year_url)
 
-    
-
-    
-
-
-
 def semchoose(url):
+    clear()
     try:
+        params_url =url
         page = requests.get(url)
         soup = BeautifulSoup(page.content,'html.parser')
 
@@ -77,7 +87,10 @@ def semchoose(url):
 
         for i in range(len(li)):
             t.add_row([i+1,li[i].a.text.strip()])
+
+        t.add_row([len(li)+1, "Back"])
         t.align = "l"
+
         print(t)  
         while(True):
             ch=int(input("Enter your choice: "))
@@ -85,16 +98,53 @@ def semchoose(url):
                 url='http://dspace.amritanet.edu:8080/'
                 url+=li[ch-1].a['href']
                 break
+            elif(ch == len(li)+1):
+                sem_table(stack_url.pop())
             else:
                 print("Please enter a valid input !")
     except:
         print("\nUNEXPECTED ERROR ! :( ")
         sleep(3)
         exit()
+    stack_url.append(params_url)
     year(url)
 
 
+def sem_table(url):
+    clear()
+    try:
+        stack_url.append(url)
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        t = PrettyTable(['No', 'Semesters'])
+        div = soup.findAll('div', id="aspect_artifactbrowser_CommunityViewer_div_community-view")
+        li = div[0].ul.findAll('li')
+
+        for i in range(len(li)):
+            t.add_row([i + 1, li[i].a.text.strip()])
+        t.add_row([(len(li) + 1), "Back"])
+        t.align = "l"
+        print(t)
+        while (True):
+            ch = int(input("Enter your semester : "))
+
+            if (ch > 0 and ch <= len(li)):
+                url = 'http://dspace.amritanet.edu:8080/'
+                url += li[ch - 1].a['href']
+                break
+            elif (ch == len(li) + 1):
+                start()
+            else:
+                print("Please enter a valid input !")
+    except Exception as e:
+        print("\nUNEXPECTED ERROR ! :( ")
+        sleep(3)
+        exit()
+    semchoose(url)
+
+
 def start():
+    clear()
     url="http://dspace.amritanet.edu:8080/xmlui/handle/123456789/"
     try:    
         page = requests.get(url)
@@ -107,12 +157,13 @@ def start():
         t.add_row(["5","MCA"])
         t.add_row(["6","MSW"])
         t.add_row(["7","M.Tech"])
+        t.add_row(["8","Exit"])
         t.align="l"
         print(t)
         while(True):
             print("\n")
             ch=int(input("Enter your choice : "))
-            if(ch<8 and ch>0):
+            if(ch<9 and ch>0):
                 if(ch==1) : 
                     url+="150"
                 elif(ch==2) : 
@@ -127,38 +178,16 @@ def start():
                     url+="393"
                 elif(ch==7) : 
                     url+="279"
+                elif (ch==8):
+                    exit()
                 break
             else:
-                print("Please enter a valid input ! ") 
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content,'html.parser')
-
-
-
-        t=PrettyTable(['No','Semesters'])
-        div=soup.findAll('div', id="aspect_artifactbrowser_CommunityViewer_div_community-view")
-        li=div[0].ul.findAll('li')
-
-        for i in range(len(li)):
-            t.add_row([i+1,li[i].a.text.strip()])
-        t.align = "l"
-        print(t)
-        while(True):
-            ch=int(input("Enter your semester : "))
-            if(ch>0 and ch<=len(li)):
-                url='http://dspace.amritanet.edu:8080/'
-                url+=li[ch-1].a['href']
-                break
-            
-            else:
-                print("Please enter a valid input !")
-    except:
+                print("Please enter a valid input ! ")
+    except Exception as e:
         print("\nOOPS! There was an unexpected error.\nExiting in few seconds... ")
         sleep(4)
         exit()
-    semchoose(url)
-            
-
+    sem_table(url)
 
 
 
